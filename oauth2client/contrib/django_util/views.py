@@ -23,19 +23,17 @@ import hashlib
 import json
 import os
 
-from django import http
-from django import shortcuts
-from django.conf import settings
-from django.core import urlresolvers
-from django.shortcuts import redirect
-from django.utils import html
 import jsonpickle
+from django import http, shortcuts
+from django.conf import settings
+from django.shortcuts import redirect
+from django.urls import reverse
+from django.utils import html
 from six.moves.urllib import parse
 
 from oauth2client import client
 from oauth2client.contrib import django_util
-from oauth2client.contrib.django_util import get_storage
-from oauth2client.contrib.django_util import signals
+from oauth2client.contrib.django_util import get_storage, signals
 
 _CSRF_KEY = 'google_oauth2_csrf_token'
 _FLOW_KEY = 'google_oauth2_flow_{0}'
@@ -69,7 +67,7 @@ def _make_flow(request, scopes, return_url=None):
         scope=scopes,
         state=state,
         redirect_uri=request.build_absolute_uri(
-            urlresolvers.reverse("google_oauth:callback")))
+            reverse("google_oauth:callback")))
 
     flow_key = _FLOW_KEY.format(csrf_token)
     request.session[flow_key] = jsonpickle.encode(flow)
