@@ -16,6 +16,7 @@
 
 import base64
 import pickle
+import sys
 
 from django.db import models
 from django.utils import encoding
@@ -53,8 +54,9 @@ class CredentialsField(models.Field):
                 return jsonpickle.decode(
                     base64.b64decode(encoding.smart_bytes(value)).decode())
             except ValueError:
+                kwargs = {'encoding': 'latin1'} if sys.version_info[0] > 2 else {}
                 return pickle.loads(
-                    base64.b64decode(encoding.smart_bytes(value)))
+                    base64.b64decode(encoding.smart_bytes(value)), **kwargs)
 
     def get_prep_value(self, value):
         """Overrides ``models.Field`` method. This is used to convert
